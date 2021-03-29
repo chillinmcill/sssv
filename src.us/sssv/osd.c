@@ -178,55 +178,55 @@ extern u8 D_01029DD0[];
 //     }
 // }
 
+
 // osd_draw_score
 void func_803491F0_75A8A0(void) {
-    sprintf(&D_803F2D3E, &D_803BE940, D_803F2D30.score);
+    sprintf(D_803F2D3E, D_803BE940, D_803F2D30.score);
     select_font(0, 3, 1, 0);
-    func_801304EC(&D_801D9E7C, &D_803F2D3E, gScreenWidth - 34, ((D_803F2CF0 >> 2) - 10));
+    func_801304EC(&D_801D9E7C, D_803F2D3E, gScreenWidth - 34, ((D_803F2CF0 >> 2) - 10));
 }
 
 void func_80349278_75A928(void) {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sssv/osd/func_80349280_75A930.s")
-// NON-MATCHING: JUSTREG
-// void func_80349280_75A930(Animal *arg0, s16 arg1) {
-//     s32 temp_a2;
-//     s32 temp_v1;
-//
-//     if (((arg0->unk16C->unk80 << 18) < 0) && ((arg0->unk366== 3) || (arg0->unk366 == 4) || (arg0->unk366 == 1))) {
-//         if (arg1 != 0) {
-//             temp_a2 = arg1 >> 2;
-//             temp_v1 = temp_a2 + 4;
-//             temp_a2 = arg0->unk36B + temp_a2;
-//             if (temp_v1 < temp_a2) {
-//                 arg0->unk36B = temp_a2;
-//             } else {
-//                 arg0->unk36B = temp_v1;
-//             }
-//         }
-//         if (arg0 != D_801DDD8C[gCurrentAnimalIndex].unk0) {
-//             if (arg0 == D_803F2CF8.animal) {
-//                 if ((arg0->health - arg1) < 0) {
-//                     D_803F2CF8.unk6 = 0;
-//                 } else {
-//                     D_803F2CF8.unk6 = arg0->health - arg1;
-//                 }
-//                 D_803F2CF8.unkA = 64;
-//             } else if ((D_803F2CF8.animal == NULL) || ((arg1 != 0) && ((D_803F2CF8.unk8 == D_803F2CF8.unk6) || (D_803F2CF8.animal->unk16C->unk7C < arg0->unk16C->unk7C)))) {
-//                 D_803F2CF8.animal = arg0;
-//                 D_803F2CF8.health = arg0->health;
-//                 if (arg0->health - arg1 < 0) {
-//                     D_803F2CF8.unk6 = 0;
-//                 } else {
-//                     D_803F2CF8.unk6 = arg0->health - arg1;
-//                 }
-//                 D_803F2CF8.unk8 = D_803F2CF8.health;
-//                 D_803F2CF8.unkA = 64;
-//             }
-//         }
-//     }
-// }
+void func_80349280_75A930(Animal *arg0, s16 arg1) {
+    s32 temp_a2;
+    s32 temp_v1;
+
+    if ((arg0->unk16C->unk80.bit) &&
+        ((arg0->unk366== 3) || (arg0->unk366 == 4) || (arg0->unk366 == 1))) {
+        if (arg1 != 0) {
+            temp_a2 = arg1 >> 2;
+            temp_v1 = temp_a2 + 4;
+            temp_a2 = arg0->unk36B + temp_a2;
+            if (temp_v1 < temp_a2) {
+                arg0->unk36B = temp_a2;
+            } else {
+                arg0->unk36B = temp_v1;
+            }
+        }
+        if (arg0 != D_801DDD8C[gCurrentAnimalIndex].unk0) {
+            if (arg0 == D_803F2CF8.animal) {
+                if ((arg0->health - arg1) < 0) {
+                    D_803F2CF8.unk6 = 0;
+                } else {
+                    D_803F2CF8.unk6 = arg0->health - arg1;
+                }
+                D_803F2CF8.unkA = 64;
+            } else if ((D_803F2CF8.animal == NULL) || ((arg1 != 0) && ((D_803F2CF8.unk8 == D_803F2CF8.unk6) || (D_803F2CF8.animal->unk16C->unk7C < arg0->unk16C->unk7C)))) {
+                D_803F2CF8.animal = arg0;
+                D_803F2CF8.health = arg0->health;
+                if (arg0->health - arg1 < 0) {
+                    D_803F2CF8.unk6 = 0;
+                } else {
+                    D_803F2CF8.unk6 = arg0->health - arg1;
+                }
+                D_803F2CF8.unk8 = D_803F2CF8.health;
+                D_803F2CF8.unkA = 64;
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sssv/osd/func_803493C8_75AA78.s")
 // NON-MATCHING: few things wrong here..
@@ -342,7 +342,7 @@ void func_803497DC_75AE8C(void) {
     D_803F2CDF = 1;
     D_803F2CE0 = 0;
     D_803F2CF2 = 1;
-    func_80128FB4(&D_803F2CF8, 12);
+    fancy_bzero(&D_803F2CF8, 12);
 }
 
 u8 func_80349874_75AF24(void) {
@@ -410,26 +410,27 @@ void func_80349AA0_75B150(u16 arg0) {
 // osd_draw_timer
 void func_80349B84_75B234(u16 arg0) {
     s32 time;
-    u8 str[40]; // how long is a piece of string
+    s16 str[20]; // how long is a piece of string
 
     time = D_803F2CD2;
     if (time > 0) {
         if (time < 60) {
-            sprintf(&D_803A8344, &D_803BE944, time); // "%d"
+            sprintf(D_803A8344, D_803BE944, time); // "%d"
         } else {
-            sprintf(&D_803A8344, &D_803BE948, time / 60, time % 60); // "%d:%02d"
+            sprintf(D_803A8344, D_803BE948, time / 60, time % 60); // "%d:%02d"
         }
     }
-    func_801308B4(&D_803A8344, &str);
-    func_8012C1F0(&D_801D9E7C);
+
+    func_801308B4(D_803A8344, str);
+    load_default_display_list(&D_801D9E7C);
     set_menu_text_color(0xFF, 0xFF, 0, 0xFF);
     select_font(0, 0, 1, 0);
     // write string centered
-    func_8012C978(&D_801D9E7C, &str, gScreenWidth >> 1, arg0, 16.0f, 16.0f);
+    func_8012C978(&D_801D9E7C, str, gScreenWidth >> 1, arg0, 16.0f, 16.0f);
 }
 
 void func_80349CA4_75B354(u16 arg0) {
-    func_8012C1F0(&D_801D9E7C);
+    load_default_display_list(&D_801D9E7C);
     set_menu_text_color(0xFF, 0xFF, 0, 0xFF);
     select_font(0, 0, 1, 0);
     func_8012EB4C(&D_801D9E7C, D_803F2CE0, (gScreenWidth >> 1), arg0, 16.0f, 16.0f, 0x10);

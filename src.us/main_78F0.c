@@ -2,7 +2,79 @@
 #include "common.h"
 
 
-void func_8012C1F0(Gfx **arg0) {
+#if 0
+
+const s32 D_80235410[] = {
+    0x0030,
+    0x0038,
+    0x1378,
+    0x24D0,
+    0x38A0,
+    0x4A60,
+    0x5F80,
+    0x6B38,
+    0x7FE8
+}
+
+// at ROM 0x2fc00
+const s32 D_80154500[37][2] = {
+    /* start, end */
+    {0x617C30, 0x61A4A0},
+    {0x61A4A0, 0x61B820},
+    {0x61B820, 0x61C2F0},
+    {0x61C2F0, 0x61CE40},
+    {0x61CE40, 0x61D990},
+    {0x61D990, 0x61E310},
+    {0x61E310, 0x61EE10},
+    {0x61EE10, 0x61FA70},
+    {0x61FA70, 0x620DE0},
+    {0x620DE0, 0x622280},
+    {0x622280, 0x622FB0},
+    {0x622FB0, 0x623720},
+    {0x623720, 0x624080},
+    {0x624080, 0x624B90},
+    {0x624B90, 0x625930},
+    {0x625930, 0x6265F0},
+    {0x6265F0, 0x627DA0},
+    {0x627DA0, 0x6286E0},
+    {0x6286E0, 0x628F80},
+    {0x628F80, 0x629A00},
+    {0x629A00, 0x62A4B0},
+    {0x62A4B0, 0x62ADA0},
+    {0x62ADA0, 0x62C170},
+    {0x62C170, 0x62C920},
+    {0x62C920, 0x62D2A0},
+    {0x62D2A0, 0x62DB10},
+    {0x62DB10, 0x62E550},
+    {0x62E550, 0x62EE70},
+    {0x62EE70, 0x62F620},
+    {0x62F620, 0x630510},
+    {0x630510, 0x6336B0},
+    {0x6336B0, 0x633720},
+    {0x633720, 0x6364B0},
+    {0x6364B0, 0x6370C0},
+    {0x6370C0, 0x637110},
+    {0x637110, 0x637160},
+    {0, 0} /* might just be alignment? */
+};
+
+#endif
+
+// at ROM 0x2fd30
+const Gfx D_80154628[] = {
+    gsDPPipeSync(),
+    gsDPSetCycleType(G_CYC_1CYCLE),
+    gsDPSetCombineLERP(PRIMITIVE, 0, TEXEL0, 0, 0, 0, 0, TEXEL0, PRIMITIVE, 0, TEXEL0, 0, 0, 0, 0, TEXEL0),
+    gsDPSetRenderMode(G_RM_XLU_SURF, G_RM_XLU_SURF2),
+    gsDPSetTexturePersp(G_TP_NONE),
+    gsDPSetTextureLUT(G_TT_NONE),
+    gsDPSetTextureFilter(G_TF_BILERP),
+    gsDPSetColorDither(G_CD_NOISE),
+    gsDPSetAlphaDither(G_AD_DISABLE),
+    gsSPEndDisplayList(),
+};
+
+void load_default_display_list(Gfx **arg0) {
     gSPDisplayList((*arg0)++, &D_80154628);
 }
 
@@ -26,7 +98,7 @@ void select_font(u8 arg0, u8 fontType, u8 arg2, u8 arg3) {
 
 void select_comic_sans_font(void) {
     D_8023F1E0.unk0 = &D_80154370;
-    D_8023F1E0.fontAddress = &D_800E1220; // _fontbufferSegmentStart
+    D_8023F1E0.fontAddress = D_800E1220; // _fontbufferSegmentStart
     D_8023F1E0.unk8 = 16;
     D_8023F1E0.unk9 = 16;
     D_8023F1E0.unkA = 4;
@@ -34,7 +106,7 @@ void select_comic_sans_font(void) {
 }
 
 void select_lcd_font(void) {
-    D_8023F1E0.fontAddress = &D_80158550; // 7-segment display font
+    D_8023F1E0.fontAddress = D_80158550; // 7-segment display font
     D_8023F1E0.unk8 = 16;
     D_8023F1E0.unk9 = 16;
     D_8023F1E0.unkA = 16;
@@ -57,12 +129,11 @@ s16 func_8012C314(f32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main_78F0/func_8012D374.s")
 
-// draw_glyph
-void func_8012DCA8(Gfx **arg0, s16 *arg1, u16 x, u16 y, f32 width, f32 height) {
+void draw_glyph(Gfx **arg0, s16 *arg1, u16 x, u16 y, f32 width, f32 height) {
     D_8023F1F8 = width;
     D_8023F1FC = height;
     func_8012FA78(arg0);
-    func_8012FB4C(arg0, *arg1);
+    load_glyph(arg0, *arg1);
 
     gSPTextureRectangle((*arg0)++, x * 4, y * 4, (x + (s32) D_8023F1F8) * 4, (y + (s32) D_8023F1FC) * 4, G_TX_RENDERTILE, 0, 0, 16384.0f / D_8023F1F8, 16384.0f / D_8023F1FC);
     gDPPipeSync((*arg0)++);
@@ -80,7 +151,7 @@ s32 func_8012E724(u16 *arg0, s32 arg1, s32 arg2) {
         } else if (temp_v0 == 339) {
             return 2;
         }
-    } else if ((temp_v0 & 0xFFFF) == 20000) {
+    } else if ((u16)temp_v0 == 20000) {
         return 3;
     }
     return 0;
@@ -93,8 +164,8 @@ s32 func_8012E724(u16 *arg0, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/main_78F0/func_8012F160.s")
 
 void func_8012FA78(Gfx **arg0) {
-    gDPSetTile((*arg0)++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0x0000, G_TX_LOADTILE,   0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
-    gDPSetTile((*arg0)++, G_IM_FMT_I, G_IM_SIZ_4b,  1, 0x0000, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+    gDPSetTile((*arg0)++, G_IM_FMT_I, G_IM_SIZ_16b, 0, 0, G_TX_LOADTILE,   0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
+    gDPSetTile((*arg0)++, G_IM_FMT_I, G_IM_SIZ_4b,  1, 0, G_TX_RENDERTILE, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMASK, G_TX_NOLOD);
     gDPSetTileSize((*arg0)++, G_TX_RENDERTILE, 0, 0, 60, 60);
 }
 
@@ -105,9 +176,8 @@ void func_8012FAD4(Gfx **dl, s32 arg1) {
     gDPPipeSync((*dl)++);
 }
 
-// load_glyph
-void func_8012FB4C(Gfx **arg0, s16 arg1) {
-    gDPSetTextureImage((*arg0)++, G_IM_FMT_I, G_IM_SIZ_16b, 1, ((arg1 * D_8023F1E0.glyphBytes) + D_8023F1E0.fontAddress) & 0x1FFFFFFF);
+void load_glyph(Gfx **arg0, s16 arg1) {
+    gDPSetTextureImage((*arg0)++, G_IM_FMT_I, G_IM_SIZ_16b, 1, (arg1 * D_8023F1E0.glyphBytes + (s32)D_8023F1E0.fontAddress) & 0x1FFFFFFF);
     gDPLoadSync((*arg0)++);
     gDPLoadBlock((*arg0)++, G_TX_LOADTILE, 0, 0, 63, 2048);
     gDPPipeSync((*arg0)++);
@@ -117,7 +187,7 @@ void func_8012FB4C(Gfx **arg0, s16 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main_78F0/func_801304EC.s")
 
-void func_801308B4(u8 *src, u16 *dst) {
+void func_801308B4(u8 *src, s16 *dst) {
     u8 tmp;
     while (*src != NULL) {
         tmp = *src;
@@ -129,18 +199,14 @@ void func_801308B4(u8 *src, u16 *dst) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main_78F0/func_801308E8.s")
-// miles and miles away
-// s16 func_801308E8(s16 arg0, s16 arg1, s32 *arg2, s32 *arg3) {
-//     s16 temp_s1;
-//     s16 temp_s3;
+// NON-MATCHING: a few differences
+// s16 func_801308E8(s16 arg0, s16 arg1, u16 *arg2, s16 *arg3) {
+//     s16 copied;
+//     s16 chunk_size;
+//     s16 i;
+//     s16 *src;
+//     u8 **file;
 //     s16 temp_s4;
-//     void *temp_s0;
-//     struct024 *temp_v0_2;
-//     s32 phi_s0;
-//     s32 phi_s0_2;
-//     s16 phi_s2;
-//     s16 phi_s1;
-//     void *phi_s0_4;
 //
 //     if (D_80204260 == 1) {
 //         if (arg0 < 0) {
@@ -160,32 +226,30 @@ void func_801308B4(u8 *src, u16 *dst) {
 //         arg0 = 6;
 //     }
 //
-//     temp_v0_2 = &D_80154500[arg1];
-//     dma_read(temp_v0_2->start, &D_8022E3F0, temp_v0_2->end - temp_v0_2->start);
-//     rnc_decompress(&D_8022E3F0, &D_80235410);
-//     strncpy(&D_80235410 + D_80235410[arg0], &D_8022E3F0, 12000);
 //
-//     temp_s4 = D_8022E3F0[0];
-//     phi_s2 = (u16)0;
-//     phi_s1 = (u16)0;
-//     phi_s0_4 = &D_8022E3F0[1];
-//     while (phi_s1++ < (s32) temp_s4) {
-//         strncpy(D_8022E3F0[phi_s1], arg3[phi_s1], phi_s0_4);
+//     // D_8022E3F0 is a scratch area:
+//     // read into D_8022E3F0
+//     // decompress from D_8022E3F0 into D_80235410
+//     // copy 12000 bytes from D_80235410 into D_8022E3F0
+//
+//     file = D_80154500[arg1 << 1];
+//     dma_read(file[0], D_8022E3F0, file[1] - file[0]);
+//     rnc_decompress((u8*)D_8022E3F0, (u8*)D_80235410);
+//     strncpy((u8*)D_80235410 + D_80235410[arg0], D_8022E3F0, 12000);
+//
+//     src = &D_8022E3F2; // offset?
+//     copied = 0;
+//
+//     temp_s4 = D_8022E3F0[0];  // total_length?
+//     for (i = 0; i < temp_s4; i++) {
+//         chunk_size = *src++;
+//         *arg2 = copied;
+//         strncpy(src, arg3 + copied, chunk_size);
+//         copied += chunk_size;
+//         src += chunk_size / 2;
 //     }
-// //     if ((s32) temp_s4 > 0) {
-// // loop_12:
-// //         temp_s3 = *phi_s0_4;
-// //         temp_s0 = phi_s0_4 + 2;
-// //         *(arg2 + (phi_s1 * 2)) = phi_s2;
-// //         temp_s1 = phi_s1 + 1;
-// //         phi_s2 = (s16) (phi_s2 + temp_s3);
-// //         phi_s1 = temp_s1;
-// //         phi_s0_4 = temp_s0 + (((s32) temp_s3 / 2) * 2);
-// //         if ((s32) temp_s1 < (s32) temp_s4) {
-// //             goto loop_12;
-// //         }
-// //     }
-//     return temp_s4;
+//
+//     return copied;
 // }
 
 s16 *func_80130A90(s16 arg0) {

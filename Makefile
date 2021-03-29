@@ -5,7 +5,7 @@ BUILD_DIR = build
 ASM_DIRS  = asm asm/libc asm/libultra asm/libultra/audio asm/libultra/gu asm/libultra/io asm/libultra/os asm/libultra/sched
 BIN_DIRS  = bin
 SRC_DIR   = src
-SRC_DIRS  = $(SRC_DIR) $(SRC_DIR)/core $(SRC_DIR)/sssv
+SRC_DIRS  = $(SRC_DIR) $(SRC_DIR)/core $(SRC_DIR)/libultra/io $(SRC_DIR)/libultra/libc $(SRC_DIR)/libultra/os $(SRC_DIR)/sssv
 
 TOOLS_DIR := tools
 
@@ -40,9 +40,9 @@ RNC64 = $(TOOLS_DIR)/rnc_propack_source/rnc64
 CC := $(TOOLS_DIR)/ido5.3_recomp/cc
 
 OPT_FLAGS := -O2
-MIPSBIT := -mips2 -o32
+MIPSISET := -mips2 -o32
 
-INCLUDE_CFLAGS := -I . -I include -I include/2.0 -I include/libc
+INCLUDE_CFLAGS := -I . -I include -I include/2.0 -I include/2.0/PR -I include/libc
 
 ASFLAGS = -EB -mtune=vr4300 -march=vr4300 -mabi=32 -I include
 
@@ -70,12 +70,20 @@ LDFLAGS = -T $(BUILD_DIR)/$(LD_SCRIPT) -Map $(TARGET).map -T undefined_syms_auto
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
 
 ### Optimisation Overrides
-
 $(BUILD_DIR)/$(SRC_DIR)/main_1050.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(SRC_DIR)/main_4790.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(SRC_DIR)/main_4790.o: OPT_FLAGS := -O2
 # TODO:
-# $(BUILD_DIR)/$(SRC_DIR)/main_4790.o: OPT_FLAGS := -O3
+# $(BUILD_DIR)/$(SRC_DIR)/main_4790.o: OPT_FLAGS := -O2 -g3
 
+# libultra
+$(BUILD_DIR)/$(SRC_DIR)/libultra/os/%.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(SRC_DIR)/libultra/io/%.o: OPT_FLAGS := -O1
+
+$(BUILD_DIR)/$(SRC_DIR)/libultra/libc/ll.o: MIPSISET := -mips3 -o32
+$(BUILD_DIR)/$(SRC_DIR)/libultra/libc/ll.o: OPT_FLAGS := -O1
+
+$(BUILD_DIR)/$(SRC_DIR)/libultra/libc/llcvt.o: MIPSISET := -mips3 -o32
+$(BUILD_DIR)/$(SRC_DIR)/libultra/libc/llcvt.o: OPT_FLAGS := -O1
 
 ### Targets
 
@@ -129,13 +137,23 @@ $(TARGET).elf: $(O_FILES) $(BUILD_DIR)/$(LD_SCRIPT)
 ifndef PERMUTER
 $(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.o: %.c include/functions.$(VERSION).h include/variables.$(VERSION).h include/structs.h
 	$(PYTHON) $(ASM_PROCESSOR_DIR)/asm_processor.py $(OPT_FLAGS) $< > $(BUILD_DIR)/$<
-	$(CC) -c -32 $(CFLAGS) $(OPT_FLAGS) $(LOOP_UNROLL) $(MIPSBIT) -o $@ $(BUILD_DIR)/$<
+	$(CC) -c -32 $(CFLAGS) $(OPT_FLAGS) $(LOOP_UNROLL) $(MIPSISET) -o $@ $(BUILD_DIR)/$<
 	$(PYTHON) $(ASM_PROCESSOR_DIR)/asm_processor.py $(OPT_FLAGS) $< --post-process $@ \
 		--assembler "$(AS) $(ASFLAGS)" --asm-prelude $(ASM_PROCESSOR_DIR)/prelude.s
 endif
 
 $(BUILD_DIR)/%.o: %.c
-	$(CC) -c $(CFLAGS) $(OPT_FLAGS) $(MIPSBIT) -o $@ $<
+	$(CC) -c $(CFLAGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+
+# force mips2 bit
+$(BUILD_DIR)/$(SRC_DIR)/libultra/libc/ll.o: $(SRC_DIR)/libultra/libc/ll.c
+	$(CC) -c $(CFLAGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(PYTHON) $(TOOLS_DIR)/set_o32abi_bit.py $@
+
+$(BUILD_DIR)/$(SRC_DIR)/libultra/libc/llcvt.o: $(SRC_DIR)/libultra/libc/llcvt.c
+	$(CC) -c $(CFLAGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(PYTHON) $(TOOLS_DIR)/set_o32abi_bit.py $@
+
 
 $(BUILD_DIR)/%.o: %.s
 	$(AS) $(ASFLAGS) -o $@ $<

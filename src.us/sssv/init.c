@@ -3,48 +3,35 @@
 #include "common.h"
 
 
-extern u8 D_803BE9F0[];
-extern u8 D_803BEA38[];
+void func_80352280_763930(void) {
+    s32 pad[2];
+    u32 len = D_0007F790 - D_000398D0;
 
-extern u8 D_0007F790[];
-extern u8 D_000398D0[];
+    if (len >= D_80099600 - D_8004B400) {
+        // "\nASSERT: len < (_gfxdlistSegmentEnd - _gfxdlistSegmentStart), %s, %u\n"
+        // "../src/init.c"
+        rmonPrintf(D_803BE9F0, D_803BEA38, 93, len);
+        // die
+        *(volatile int*)0 = 0;
+    }
+    D_801D9E74 = D_8004B400;
+    dma_read(D_000398D0, D_801D9E74, len);
+}
 
-extern u8 D_803BEA48[];
-extern u8 D_803BEA78[];
+void func_80352310_7639C0(void) {
+    s32 pad[2];
+    u32 len = D_00546BC0 - D_005449C0;
 
-extern u8 D_00546BC0[];
-extern u8 D_005449C0[];
+    if (len >= 0x2201U) {
+        // "\nASSERT: len <= sizeof(WaterTexture), %s, %u\n"
+        // "../src/init.c"
+        rmonPrintf(D_803BEA48, D_803BEA78, 115, len);
+        *(volatile int*)0 = 0;
+    }
+    dma_read(D_005449C0, &D_800DCC20, len);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sssv/init/func_80352280_763930.s")
-// NON-MATCHING: 80% there..
-// void func_80352280_763930(void) {
-//     u32 len = D_0007F790 - D_000398D0;
-//
-//     if (len >= D_80099600 - D_8004B400) {
-//         // "\nASSERT: len < (_gfxdlistSegmentEnd - _gfxdlistSegmentStart), %s, %u\n"
-//         // "../src/init.c"
-//         rmonPrintf(D_803BE9F0, D_803BEA38, 0x5D, len);
-//         // die
-//         *(volatile int*)0 = 0;
-//     }
-//     D_801D9E74 = D_8004B400;
-//     dma_read(&D_000398D0, D_8004B400, len);
-// }
-
-#pragma GLOBAL_ASM("asm/nonmatchings/sssv/init/func_80352310_7639C0.s")
-// NON-MATCHING: wrong stack size...
-// void func_80352310_7639C0(void) {
-//     u32 len = D_00546BC0 - D_005449C0;
-//
-//     if (len >= 0x2201U) {
-//         // "\nASSERT: len <= sizeof(WaterTexture), %s, %u\n"
-//         // "../src/init.c"
-//         rmonPrintf(D_803BEA48, D_803BEA78, 0x73, len);
-//         *(volatile int*)0 = 0;
-//     }
-//     dma_read(&D_005449C0, &D_800DCC20, len);
-// }
-
+// 2000 lines
 #pragma GLOBAL_ASM("asm/nonmatchings/sssv/init/func_80352380_763A30.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sssv/init/func_80354188_765838.s")
@@ -92,11 +79,11 @@ void func_803560CC_76777C(void) {
     func_8032AAF0_73C1A0(28);
 }
 
-void func_80356134_7677E4(s32 arg0) {
+void func_80356134_7677E4(Animal *a) {
     s32 temp_v0;
     s16 rot;
 
-    temp_v0 = func_802F8160_709810(D_803D5530, arg0, 0x20, 0x14, 0x1E, 0x59, -4, 3, (f32)D_803A05B0 / 65536.0);
+    temp_v0 = func_802F8160_709810(D_803D5530, a, 0x20, 0x14, 0x1E, 0x59, -4, 3, (f32)D_803A05B0 / 65536.0);
     if (temp_v0 == -1) {
         rot = 32;
     } else {

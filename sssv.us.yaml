@@ -27,6 +27,8 @@ segments:
     - [0x44D0, c, core/string]
     - [0x4790, c] # -O2 -g3 TODO: check further
     - [0x4910, c] #
+    - [0x4A00, c]
+    - [0x51D0, c]
     - [0x67F0, c, core/rnc]
     - [0x7770, c]
     - [0x7890, c]
@@ -39,32 +41,30 @@ segments:
     - [0xE3C0, c] # more audio
     - [0xF600, asm, libultra/audio/csplayer] # customised
     - [0x10CB0, c]
+    - [0x10DC0, c]
     - [0x123E0, c]
-  - name:  lib
-    type:  code
-    start: 0x00012FC0
-    vram:  0x801378C0
-    overlay: no
-    subsections:
-    - [0x12FC0, asm, libultra/os/initialize]
-    - [0x13250, asm, libc/ll]
-    - [0x13510, asm, libultra/gu/sqrtf]
-    - [0x13520, asm, libultra/os/gettime]
-    - [0x135B0, asm, libultra/os/writebackdcacheall]
+    # fake split here for progress
+    - [0x12FC0, linker, code_lib]
+    - [0x12FC0, c, libultra/os/initialize]
+    - [0x13250, c, libultra/libc/ll]
+    - [0x13510, hasm, libultra/gu/sqrtf]
+    - [0x13520, c, libultra/os/gettime]
+    - [0x135B0, hasm, libultra/os/writebackdcacheall]
     - [0x135E0, asm, libultra/io/pidma]
-    - [0x136F0, asm, libultra/os/recvmesg]
-    - [0x13830, asm, libultra/os/virtualtophysical]
-    - [0x138B0, asm, libultra/os/createmesgqueue]
-    - [0x138E0, asm, libultra/os/startthread]
+    - [0x136F0, c, libultra/os/recvmesg]
+    - [0x13830, c, libultra/os/virtualtophysical]
+    - [0x138B0, c, libultra/os/createmesgqueue]
+    - [0x138E0, c, libultra/os/startthread]
     - [0x13A30, asm, libultra/sched/sched] # scheduler with a bunch of inlined funcs?
     - [0x14370, asm, libultra/io/visetspecial]
     - [0x14530, asm, libultra/io/contreaddata]
-    - [0x14750, asm, libultra/os/sendmesg]
-    - [0x14900, asm, libultra/io/visetxscale]
+    - [0x14750, c, libultra/os/sendmesg]
+    - [0x148A0, bin, alignment_meme_001] # 0x60 bytes of 0x00
+    - [0x14900, c, libultra/io/visetxscale]
     - [0x14A30, asm, libultra/io/visetyscale]
     - [0x14A90, asm, libultra/io/viblack]
-    - [0x14B00, asm, libultra/os/invalicache]
-    - [0x14B80, asm, libultra/os/invaldcache]
+    - [0x14B00, hasm, libultra/os/invalicache]
+    - [0x14B80, hasm, libultra/os/invaldcache]
     - [0x14C30, asm, libc/bzero]
     - [0x14CD0, asm, libc/sprintf]
     - [0x14D50, asm, libc/syncprintf]
@@ -74,7 +74,7 @@ segments:
     - [0x14F20, asm, libultra/io/aisetfreq]
     - [0x15080, asm, libultra/audio/sl]
     - [0x15140, asm, libultra/audio/heapalloc]
-    - [0x151A0, asm, libultra/os/createthread]
+    - [0x151A0, c, libultra/os/createthread]
     - [0x152F0, asm, libultra/io/aisetnextbuf]
     - [0x153A0, asm, libultra/io/aigetlen]
     - [0x153B0, asm, libultra/audio/synthesizer]
@@ -107,17 +107,17 @@ segments:
     - [0x19530, asm, libultra/audio/synstartvoiceparam]
     - [0x19620, asm, libultra/audio/synsetpan]
     - [0x196B0, asm, libultra/audio/synsetfxmix]
-    - [0x19750, asm, libultra/os/setintmask]
+    - [0x19750, hasm, libultra/os/setintmask]
     - [0x197F0, asm, libultra/io/pimgr]
-    - [0x19980, asm, libultra/os/setthreadpri]
+    - [0x19980, c, libultra/os/setthreadpri]
     - [0x19A60, asm, libultra/gu/usprite]
-    - [0x19AB0, asm, libultra/os/seteventmesg]
+    - [0x19AB0, c, libultra/os/seteventmesg]
     - [0x19B20, asm, libultra/io/controller]
     - [0x19E60, asm, libultra/io/contsetch]
     - [0x19ED0, asm, libultra/io/pfsinit]
     - [0x19F90, asm, libultra/io/motor]
     - [0x1A730, asm, libultra/io/conteepprobe]
-    - [0x1A7D0, asm, libc/llcvt]
+    - [0x1A7D0, c, libultra/libc/llcvt]
     - [0x1A9E0, asm, libultra/gu/translate]
     - [0x1AA80, asm, libultra/gu/perspective]
     - [0x1AD10, asm, libultra/gu/rotateRPY]
@@ -130,22 +130,22 @@ segments:
     - [0x1BC30, asm, libultra/gu/lookathil]
     - [0x1C420, asm, libultra/gu/random]
     - [0x1C450, asm, libultra/io/vigetline]
-    - [0x1C460, asm, libultra/os/setsr]
-    - [0x1C470, asm, libultra/os/getsr]
-    - [0x1C480, asm, libultra/os/setfpccsr]
-    - [0x1C490, asm, libultra/io/sprawread]
-    - [0x1C4E0, asm, libultra/io/sprawwrite]
-    - [0x1C530, asm, libultra/os/exceptasm]
-    - [0x1CE40, asm, libultra/os/writebackdcache]
-    - [0x1CEC0, asm, libultra/os/maptlbrdb]
+    - [0x1C460, hasm, libultra/os/setsr]
+    - [0x1C470, hasm, libultra/os/getsr]
+    - [0x1C480, hasm, libultra/os/setfpccsr]
+    - [0x1C490, asm, libultra/io/sirawread]
+    - [0x1C4E0, asm, libultra/io/sirawwrite]
+    - [0x1C530, hasm, libultra/os/exceptasm]
+    - [0x1CE40, hasm, libultra/os/writebackdcache]
+    - [0x1CEC0, hasm, libultra/os/maptlbrdb]
     - [0x1CF20, asm, libultra/io/pirawread]
-    - [0x1CF80, asm, libultra/os/interrupt]
-    - [0x1CFC0, asm, libultra/os/getcount]
-    - [0x1CFD0, asm, libultra/os/timerintr]
-    - [0x1D3D0, asm, libultra/os/jammesg]
+    - [0x1CF80, hasm, libultra/os/interrupt]
+    - [0x1CFC0, hasm, libultra/os/getcount]
+    - [0x1CFD0, c, libultra/os/timerintr]
+    - [0x1D3D0, c, libultra/os/jammesg]
     - [0x1D520, asm, libultra/io/pigetcmdq] # TODO: double-check
-    - [0x1D550, asm, libultra/os/thread]
-    - [0x1D590, asm, libultra/os/probetlb]
+    - [0x1D550, c, libultra/os/thread]
+    - [0x1D590, hasm, libultra/os/probetlb]
     - [0x1D650, asm, libultra/io/vimgr]
     - [0x1D9B0, asm, libultra/io/visetmode]
     - [0x1DA20, asm, libultra/io/visetevent]
@@ -162,7 +162,7 @@ segments:
     - [0x1E250, asm, libc/xprintf]
     - [0x1EF10, asm, libc/string]
     - [0x1EFB0, asm, libultra/io/conteepwrite]
-    - [0x1F4D0, asm, libultra/os/settimer]
+    - [0x1F4D0, c, libultra/os/settimer]
     - [0x1F5B0, asm, libultra/io/conteepread]
     - [0x1F8D0, asm, libultra/audio/syndelete]
     - [0x1F8E0, asm, libultra/io/ai]
@@ -181,7 +181,7 @@ segments:
     - [0x22660, asm, libultra/io/cartrominit]
     - [0x22760, asm, libultra/io/leodiskinit]
     - [0x22860, asm, libultra/io/piacs]
-    - [0x22920, asm, libultra/os/getthreadpri]
+    - [0x22920, c, libultra/os/getthreadpri]
     - [0x22940, asm, libultra/io/pirawdma]
     - [0x22A20, asm, libultra/io/epirawdma]
     - [0x22C50, asm, libultra/io/devmgr]
@@ -196,8 +196,8 @@ segments:
     - [0x258D0, asm, libultra/gu/normalize]
     - [0x25960, asm, libultra/io/si]
     - [0x25990, asm, libultra/io/leointerrupt]
-    - [0x26210, asm, libultra/os/destroythread]
-    - [0x26320, asm, libultra/os/setcompare]
+    - [0x26210, c, libultra/os/destroythread]
+    - [0x26320, hasm, libultra/os/setcompare]
     - [0x26330, asm, libultra/io/vigetcurrcontext]
     - [0x26340, asm, libultra/io/viswapcontext]
     - [0x266A0, asm, libultra/io/spgetstat]
@@ -211,22 +211,30 @@ segments:
     - [0x26DA0, asm, libc/xldtob]
     - [0x27860, asm, libultra/audio/filter]
     - [0x27880, asm, libultra/audio/reverb]
-    - [0x284D0, asm, libultra/os/resetglobalintmask]
+    - [0x284D0, c, libultra/os/resetglobalintmask]
     - [0x28530, asm, libultra/io/epirawwrite]
     - [0x286C0, asm, libultra/io/epirawread]
-    - [0x28860, asm, libultra/os/setglobalintmask]
-    - [0x288B0, asm, libultra/os/yieldthread]
-    - [0x28900, asm, libc/ldiv]
-  - [0x028A90, bin]
-  - [0x02FDD0, bin] # textures; CH, 7-segment score display
+    - [0x28860, c, libultra/os/setglobalintmask]
+    - [0x288B0, c, libultra/os/yieldthread]
+    - [0x28900, c, libultra/libc/ldiv]
   - name:  main_data
     type:  code
-    start: 0x00036410
-    vram:  0x8015AD10
+    start: 0x028A90 # 0x00035050
+    vram:  0x8014D390
     overlay: no
+    subalign: 8
     subsections:
+    - [0x028A90, bin]
+    # - [0x02FC00, .rodata, main_78F0]
+    - [0x02FD28, .rodata, main_78F0]
+    - [0x02FD80, bin]
+    - [0x02FDD0, bin] # textures; CH, 7-segment score display
+    - [0x035050, .data, libultra/os/initialize]
+    - [0x035070, bin]
     - [0x036410, .rodata, core/fontinit]
-  - [0x036470, bin] # more data
+    - [0x036470, bin] # more data
+    - [0x036AC0, .rodata, libultra/libc/llcvt]
+    - [0x036AD0, bin]
   - [0x0398D0, bin] # textures
   - [0x07F790, bin] # some more textures
   - [0x097020, bin]
@@ -259,6 +267,7 @@ segments:
   - [0x12A390, bin, rnc_12A390] # 18979 => 51200 # fonts I4 format
   ##
   - [0x12EDC0, bin] # sound file
+  - [0x133450, bin] # end of soundfile?
   - [0x1AE480, bin]
   - [0x1AE880, bin]
   - [0x1B6510, bin] # "B1" ...
@@ -267,7 +276,7 @@ segments:
   - [0x1E11C0, bin]
   - [0x3B8F60, bin]
   - [0x3e2780, bin]
-  # all these start with 0044 00
+  # music (all these start with 0044 00 and can be extracted with Soundbank tool)
   - [0x40B210, bin] # "S1" # 244 bytes long
   - [0x40B304, bin] # length 0xE6A
   - [0x40C170, bin]
@@ -292,13 +301,14 @@ segments:
   - [0x426854, bin]
   - [0x426c34, bin]
   - [0x426dac, bin]
-  - [0x426eb4, bin] # music
-  - [0x427198, bin] # music
-  - [0x427c40, bin] # music
-  - [0x427ff4, bin] # music
-  - [0x429ab8, bin] # music
-  - [0x42b5a0, bin] # music
-  - [0x42c49c, bin] # music
+  - [0x426eb4, bin]
+  - [0x427198, bin]
+  - [0x427c40, bin]
+  - [0x427ff4, bin]
+  - [0x429ab8, bin]
+  - [0x42b5a0, bin]
+  - [0x42c49c, bin]
+  # end of music
   - [0x42DCA0, bin, rnc_42DCA0] # 30326 => 54880 # DMA'd to 0x80100000
   - [0x435320, bin, rnc_435320] # 30784 => 54880
   - [0x43CB60, bin, rnc_43CB60] # 35981 => 54880
@@ -548,7 +558,7 @@ segments:
     vram:  0x80294E50
     subsections:
     - [0x6384F0, c]
-    - [0x63C660, asm] # this is a monster file
+    - [0x63C660, c]
   - type:  code
     name:  overlay1_data
     start: 0x0063CDD0
@@ -580,10 +590,10 @@ segments:
     vram:  0x80294E50
     subsections:
     - [0x6A6500, c]
-    - [0x6A7A80, asm]
+    - [0x6A7A80, c]
     - [0x6AB090, c]
-    - [0x6AC360, asm]
-    - [0x6ACF20, asm]
+    - [0x6AC360, c]
+    - [0x6ACF20, c]
     - [0x6B5380, c]
     - [0x6C5570, asm]
     - [0x6C63D0, c, sssv/collision]
@@ -603,7 +613,7 @@ segments:
     - [0x702DE0, asm]
     - [0x7041D0, asm]
     - [0x7070A0, asm]
-    - [0x7117E0, asm]
+    - [0x7117E0, c]
     - [0x7118C0, asm]
     - [0x7138B0, asm]
     - [0x714500, asm]
@@ -622,13 +632,13 @@ segments:
     - [0x741000, asm]
     - [0x7558F0, asm]
     - [0x7598E0, c, sssv/osd]
-    - [0x75B9D0, asm]
+    - [0x75B9D0, c, sssv/hilites]
     - [0x75BC80, asm]
     - [0x75D3D0, asm]
     - [0x763930, c, sssv/init]
     - [0x767AC0, c, sssv/overlay2_767AC0]
     - [0x7688B0, c]
-    - [0x7689A0, asm]
+    - [0x7689A0, c]
     - [0x768B90, asm]
     - [0x76BCA0, asm]
     - [0x76D850, asm]
@@ -639,24 +649,24 @@ segments:
     - [0x77EDB0, asm]
     - [0x780E50, asm]
     - [0x783D90, asm]
-    - [0x786320, asm]
-    - [0x78A890, asm]
-    - [0x78CEB0, asm]
+    - [0x786320, c]
+    - [0x78A890, c]
+    - [0x78CEB0, c]
     - [0x78E970, c]
     - [0x7917A0, c, sssv/animinit]
-    - [0x793700, asm]
-    - [0x7943A0, asm]
-    - [0x794EE0, asm]
-    - [0x79B1E0, asm]
-    - [0x79CEF0, asm]
+    - [0x793700, c]
+    - [0x7943A0, c]
+    - [0x794EE0, c]
+    - [0x79B1E0, c]
+    - [0x79CEF0, c, sssv/credits]
     - [0x79D0E0, c, sssv/cheats]
-    - [0x79D8E0, asm]
-    - [0x79DE10, asm] # references animal info screen background
-    - [0x79E640, c]
+    - [0x79D8E0, c]
+    - [0x79DE10, c]
+    - [0x79E640, c, sssv/terminal_background]
     - [0x7A0DA0, c]
-    - [0x7A8A50, asm]
-    - [0x7A9CE0, asm]
-    - [0x7AF410, asm]
+    - [0x7A8A50, c]
+    - [0x7A9CE0, c] # relates to file select
+    - [0x7AF410, c]
   - name:  overlay2_data
     type:  code
     start: 0x007B1B90
@@ -664,9 +674,15 @@ segments:
     subsections:
     - [0x7B1B90, bin]
     - [0x7BC970, bin] # "all of the objects in the game (not just in the area you are in)" 0xB0 per item
+    - [0x7C76B0, .data, sssv/credits]
+    - [0x7C7960, bin]
     - [0x7C8AC0, bin] # more textures
     # - [0x7D0000, .rodata, sssv/osd]
     - [0x7D0028, bin]
+    - [0x7D0AA0, .rodata, overlay2_794EE0]
+    - [0x7D0B40, bin]
+    - [0x7D0B70, .rodata, sssv/credits]
+    - [0x7D1150, bin]
     - [0x7D1170, bin] # cheats, mapped to 0x803BFAC0
     - [0x7D1200, bin]
     - [0x7D1AD0, bin]

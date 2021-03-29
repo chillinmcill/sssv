@@ -235,12 +235,13 @@ void func_8032AA94_73C144(void) {
 // }
 
 // reset or initialise something?
+// #pragma GLOBAL_ASM("asm/nonmatchings/overlay2_739290/func_8032AE34_73C4E4.s")
 void func_8032AE34_73C4E4(void) {
     struct035 *tmp;
     s16 i;
 
     for (i = 0; i < 68; i++) { // AID_MAX_ANIMALS
-        tmp = &D_801D9ED8[i];
+        tmp = &D_801D9ED8.unk0[i];
         tmp->unkDA = 1;
         tmp->unkE0 = 1;
     }
@@ -261,7 +262,7 @@ void func_8032AEA0_73C550(void) {
     }
 
     for (i = 0; i < 68; i++) {
-        tmp = &D_801D9ED8[i];
+        tmp = &D_801D9ED8.unk0[i];
         tmp->unkC8 = tmp->unkC8 / 3;
         tmp->unkA4 = tmp->unkA4 / 3;
         tmp->unkAA = tmp->unkAA / 3;
@@ -281,15 +282,15 @@ void func_8032AEA0_73C550(void) {
 //     s16 temp_a1;
 //     u16 temp_v1;
 //     Animal *temp_a0;
-//     struct036 *temp_v0;
+//     struct050 *temp_v0;
 //
 //     temp_a1 = gCurrentAnimalIndex;
-//     temp_v0 = &((struct015*)D_801D9ED8)[temp_a1]; /* this cast makes no sense */
+//     temp_v0 = &D_801D9ED8.unk0[gCurrentAnimalIndex];
 //     temp_a0 = temp_v0->animal;
-//     temp_v1 = temp_a0->unk16C->unk0; // * ?
+//     temp_v1 = temp_a0->unk16C->unk0;
 //     if (temp_v1 == 278) {
-//         D_803D5520->unk0 = temp_v0->unk3EB0;
-//         D_803D5524 = &temp_v0->unk3EB0;
+//         D_803D5520->unk0 = &D_801D9ED8.animal;
+//         D_803D5524 = D_801D9ED8.animal;
 //         D_803D5528 = temp_a0;
 //         D_803D552C = temp_a0;
 //         D_803D5530 = temp_a0;
@@ -300,8 +301,8 @@ void func_8032AEA0_73C550(void) {
 //         func_802B2EA8_6C4558();
 //         D_803A6CE4 |= 4;
 //     } else if (temp_v1 == 280) {
-//         D_803D5520->unk0 = temp_v0->unk3EB0;
-//         D_803D5524 = &temp_v0->unk3EB0;
+//         // D_803D5520->unk0 = temp_v0->unk3EB0;
+//         // D_803D5524 = &temp_v0->unk3EB0;
 //         D_803D5528 = temp_a0;
 //         D_803D552C = temp_a0;
 //         D_803D5530 = temp_a0;
@@ -372,7 +373,7 @@ void func_8032C0EC_73D79C(s32 arg0, s16 x, s16 y, s16 z, s16 r, s16 g, s16 b) {
 void func_8032C2D0_73D980(s16 arg0, s16 arg1, f32 arg2) {
     s16 *tmp;
 
-    if (arg0 != 0xFF) {
+    if (arg0 != 255) {
         tmp = &D_803A69F0[arg0];
         if ((*tmp == 8) || (func_80132D54() < *tmp)) {
             func_8013307C(arg0, 0, arg1, arg2, 64);
@@ -380,7 +381,22 @@ void func_8032C2D0_73D980(s16 arg0, s16 arg1, f32 arg2) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlay2_739290/func_8032C360_73DA10.s")
+void func_8032C360_73DA10(s16 arg0, s16 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5, f32 arg6) {
+    s32 sqrt;
+    s16 tmp;
+
+    if ((D_803F2D10.unk0 == 0) && (arg0 != 255)) {
+        if ((D_803A69F0[arg0] == 8) || (func_80132D54() < D_803A69F0[arg0])) {
+            sqrt = sqrtf(((arg3 - (s16) D_803F2C44) * (arg3 - (s16) D_803F2C44)) +
+                         ((arg4 - (s16) D_803F2C48) * (arg4 - (s16) D_803F2C48)) +
+                         ((arg5 - (s16) D_803F2C4C) * (arg5 - (s16) D_803F2C4C)));
+            if (sqrt < D_803A6730[arg0]) {
+                tmp = 256 - ((sqrt * 256) / D_803A6730[arg0]);
+                func_8013307C(arg0, 0, (tmp * arg1) >> 8, arg6, 64);
+            }
+        }
+    }
+}
 
 void func_8032C508_73DBB8(s16 arg0, s16 arg1, s16 arg2, f32 arg3) {
     if (D_803F2D10.unk0 == 0) {
@@ -402,27 +418,22 @@ void func_8032CD20_73E3D0(s32 arg0, s16 arg1, s16 arg2, s16 arg3, f32 arg4) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlay2_739290/func_8032CD70_73E420.s")
-// NON-MATCHING: JUSTREG
-// void func_8032CD70_73E420(s32 arg0, s16 arg1, s16 arg2, s16 arg3, f32 arg4, s16 arg5, s16 arg6, s16 arg7) {
-//     s16 temp_v1_2;
-//     s32 temp_a0;
-//     s32 temp_f6;
-//     s32 temp_v0;
-//     s32 temp_v1;
-//
-//     if (arg1 != 0xFF) {
-//         temp_v0 = arg5 - (s16) D_803F2C44;
-//         temp_v1 = arg6 - (s16) D_803F2C48;
-//         temp_a0 = arg7 - (s16) D_803F2C4C;
-//         temp_f6 = sqrtf((temp_v0 * temp_v0) + (temp_v1 * temp_v1) + (temp_a0 * temp_a0));
-//         temp_v1_2 = D_803A6730[arg1];
-//         if (temp_f6 < temp_v1_2) {
-//             temp_v1 = 256 - ((temp_f6 << 8) / temp_v1_2);
-//             temp_f6 = ((s16) temp_v1 * arg2) >> 8;
-//             func_8013328C(arg0, arg1, 64, arg4, temp_f6, arg3);
-//         }
-//     }
-// }
+void func_8032CD70_73E420(s32 arg0, s16 arg1, s16 arg2, s16 arg3, f32 arg4, s16 arg5, s16 arg6, s16 arg7) {
+    s16 tmp;
+    s32 sqrt;
+
+    if (arg1 != 0xFF) {
+        sqrt = sqrtf(((arg5 - (s16) D_803F2C44) * (arg5 - (s16) D_803F2C44)) +
+                     ((arg6 - (s16) D_803F2C48) * (arg6 - (s16) D_803F2C48)) +
+                     ((arg7 - (s16) D_803F2C4C) * (arg7 - (s16) D_803F2C4C)));
+        if (sqrt < D_803A6730[arg1]) {
+            tmp = 256 - ((sqrt * 256) / D_803A6730[arg1]);
+            // fakematch? or just a typo?
+            sqrt = (tmp * arg2) >> 8;
+            sqrt = (tmp * arg2) >> 8;
+            func_8013328C(arg0, arg1, 64, arg4, sqrt, arg3);
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlay2_739290/func_8032CED0_73E580.s")

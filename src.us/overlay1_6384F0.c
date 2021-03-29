@@ -2,6 +2,18 @@
 
 #include "common.h"
 
+#if 0
+const Gfx D_801542D0[] =
+{
+    gsDPPipeSync(),
+    gsSPSetGeometryMode(G_CULL_BACK | G_TEXTURE_GEN),
+    gsDPSetCombineMode(G_CC_DECALRGB, G_CC_DECALRGB),
+    gsSPTexture(0x10000*(0.0302734), 0x10000*(0.0302734), 0, G_TX_RENDERTILE, G_ON),
+    // maps to ROM 0x2E9D0
+    gsDPLoadTextureBlock(D_801532D0, G_IM_FMT_RGBA, G_IM_SIZ_16b, 32, 32, 0, G_TX_NOMIRROR | G_TX_WRAP, G_TX_NOMIRROR | G_TX_WRAP, 5, 5, G_TX_NOLOD, G_TX_NOLOD),
+    gsSPEndDisplayList(),
+}
+#endif
 
 void func_80294E50_6384F0(void) {
     func_802988E8_63BF88();
@@ -34,26 +46,27 @@ void func_802950B8_638758(void) {
     if (D_80204260 == 1) {
         func_80298FC0_63C660(0);
     }
-    rnc_decompress(&D_802B64A0, &D_80302E88); // newscaster video
-    rnc_decompress(&D_802AFBD0, &D_8039E2E8);
-    rnc_decompress(&D_802B12D0, &D_803A38D8);
-    rnc_decompress(&D_802B2930, &D_803A8EC8);
-    rnc_decompress(&D_802B3F90, &D_80338688);
-    rnc_decompress(&D_802C11C0, &D_8033CE88);
-    rnc_decompress(&D_802BC430, &D_8032AE88);
-    rnc_decompress(&D_802F4CA0, &D_80376ED8);
+    rnc_decompress(D_802B64A0, D_80302E88); // newscaster "video"
+    rnc_decompress(D_802AFBD0, D_8039E2E8);
+    rnc_decompress(D_802B12D0, D_803A38D8);
+    rnc_decompress(D_802B2930, D_803A8EC8);
+    rnc_decompress(D_802B3F90, D_80338688);
+    rnc_decompress(D_802C11C0, D_8033CE88);
+    rnc_decompress(D_802BC430, D_8032AE88);
+    rnc_decompress(D_802F4CA0, D_80376ED8);
 
     func_801308E8(D_8023F2AE, 0x21, &D_80231AA0, &D_80231D5C);
 
     src = func_80130A90(16);
-    dst = &D_802042F0;
+    dst = D_802042F0;
     while (*src != 30000) {
         *dst++ = *src++;
     }
     *dst = 30000;
 
+
     src = func_80130A90(14);
-    dst = &D_80204368;
+    dst = D_80204368;
     while (*src != 30000) {
         *dst++ = *src++;
     }
@@ -82,13 +95,13 @@ void func_8029548C_638B2C(void) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlay1_6384F0/func_80295494_638B34.s")
-// NON-MATCHING: second half goes awry
+// NON-MATCHING: 2 instructions in the wrong place
 // void func_80295494_638B34(Gfx **arg0, u16 arg1) {
 //     s32 phi_a1;
 //     s32 phi_a2;
 //
-//     D_80299DC4 = (f32) D_80299DB8;
-//     D_80299DC8 = (f32) D_80299DBC;
+//     D_80299DC4 = D_80299DB8;
+//     D_80299DC8 = D_80299DBC;
 //
 //     func_80294EB8_638558(&D_801D9E7C);
 //
@@ -106,13 +119,14 @@ void func_8029548C_638B2C(void) {
 //         if (phi_a2 >= 313) {
 //             phi_a2 = 312;
 //         }
-//         gDPSetScissorFrac((*arg0)++, G_SC_EVEN_INTERLACE, phi_a1 * 4.0f, 480, phi_a2 * 4.0f, 484);
+//         gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, phi_a1, 120, phi_a2, 121);
 //     } else if (arg1 < 40) {
 //         phi_a1 = (arg1 / 2) * 12;
 //         if (phi_a1 >= 233) {
 //             phi_a1 = 232;
 //         }
-//         gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 8, (239 - phi_a1) * 4.0f, 312, phi_a1 * 4.0f);
+//         // this line is slightly off...
+//         gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 8, 239 - phi_a1, 312, phi_a1);
 //     } else {
 //         gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 8, 8, gScreenWidth - 8, gScreenHeight - 8);
 //     }
@@ -125,7 +139,7 @@ void func_8029548C_638B2C(void) {
 //     gDPSetRenderMode((*arg0)++, G_RM_ZB_PCL_SURF, G_RM_ZB_PCL_SURF2);
 //     gSPClearGeometryMode((*arg0)++, G_CULL_BACK);
 //     gSPDisplayList((*arg0)++, &D_80299CD0);
-//     gDPSetScissorFrac((*arg0)++, G_SC_EVEN_INTERLACE, 8, 8, gScreenWidth - 8, gScreenHeight - 8);
+//     gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 8, 8, gScreenWidth - 8, gScreenHeight - 8);
 // }
 
 void func_802958B8_638F58(Gfx **dl) {
@@ -140,11 +154,11 @@ void func_802958B8_638F58(Gfx **dl) {
 #pragma GLOBAL_ASM("asm/nonmatchings/overlay1_6384F0/func_8029597C_63901C.s")
 // void func_8029597C_63901C(s32 arg0, u8 arg1) {
 //     s16 temp_t2;
-//     s32 temp_v0_2;
 //
 //     u8 phi_t3;
 //     s32 phi_t1;
 //     s32 phi_v1;
+//
 //
 //     if (arg1 != 0) {
 //         D_80299FD0 = 60;
@@ -152,10 +166,11 @@ void func_802958B8_638F58(Gfx **dl) {
 //     }
 //
 //     temp_t2 = ((D_80299FCC * 260.0f) / 48.0) + 60.0;
-//     if (D_80299FCC < 0x18) {
-//         phi_t3 = 1U;
+//
+//     if (D_80299FCC < 24) {
+//         phi_t3 = 1;
 //     } else {
-//         phi_t3 = 0U;
+//         phi_t3 = 0;
 //     }
 //
 //     func_801366BC(&D_801D9E7C, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -172,8 +187,7 @@ void func_802958B8_638F58(Gfx **dl) {
 //         phi_v1 = D_80299FD0;
 //     }
 //
-//     temp_v0_2 = 48 - D_80299FCC;
-//     func_80136938(&D_801D9E7C, arg0, 320, 240, phi_t1, ((D_80299FCC * 195.0f) / 48.0) + D_80302D28, phi_t3, 0, ((s32) (temp_t2 - phi_v1) / 2) + temp_v0_2, temp_v0_2, 0x10);
+//     func_80136938(&D_801D9E7C, arg0, 320, 240, phi_t1, ((D_80299FCC * 195.0f) / 48.0) + D_80302D28, phi_t3, 0, ((temp_t2 - phi_v1) / 2) + 48 - D_80299FCC, 48 - D_80299FCC, 16);
 //     if (D_80299FCC < 49) {
 //         if (D_80299FCC < 24) {
 //             D_80299FD0 -= temp_t2 / 48;
@@ -184,11 +198,55 @@ void func_802958B8_638F58(Gfx **dl) {
 //     }
 // }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlay1_6384F0/func_80295C38_6392D8.s")
+void func_80295C38_6392D8(u8 arg0, u8 arg1) {
+    gSPDisplayList(D_801D9E7C++, &D_801582C0);
+    gDPSetPrimColor(D_801D9E7C++, 0, 0, D_80299E10, D_80299E10, D_80299E10, 0xFF);
+
+
+    func_80135CD8(0, 0, 320, 256, &D_801D9E7C, D_80302E88);
+
+    switch (arg0) {
+    case 1:
+        D_80302E64 = D_8039E2E8;
+        break;
+    case 2:
+        D_80302E64 = D_803A38D8;
+        break;
+    case 3:
+        D_80302E64 = D_803A8EC8;
+        break;
+    }
+
+    if (arg0) {
+        func_80135CD8(112, 20, 96, 96, &D_801D9E7C, D_80302E64);
+    }
+    if (arg1) {
+        func_80135CD8(112, 131, 96, 96, &D_801D9E7C, D_80338688);
+    }
+
+    if ((D_80299E14 >= D_80299C84[2]) && ((D_80299C84[2] + 7) >= D_80299E14)) {
+        switch ((D_80299E14 - D_80299C84[2]) / 2) {
+        case 0:
+            D_80302E64 = D_802B58A0;
+            break;
+        case 1:
+        case 3:
+            D_80302E64 = D_802B60A0;
+            break;
+        case 2:
+            D_80302E64 = D_802B5CA0;
+            break;
+        }
+        func_801356C0(D_80299C84[0], D_80299C84[1], 32, 32, &D_801D9E7C, D_80302E64, 32.0f, 32.0f, 8);
+        D_80299E14 += 1;
+    } else {
+        D_80299E14 = 0;
+    }
+}
 
 void func_80295EB0_639550(s32 arg0) {
     func_801366BC(&D_801D9E7C, 0xFF, 0xFF, 0xFF, 0xFF);
-    func_80136938(&D_801D9E7C, &D_8032AE88, 160, 128, 320, 241, 0, 0, arg0, 0, 16);
+    func_80136938(&D_801D9E7C, D_8032AE88, 160, 128, 320, 241, 0, 0, arg0, 0, 16);
     func_80129594(&D_801D9E7C, D_80204278);
 
     gSPViewport(D_801D9E7C++, &D_80152EA8);
@@ -199,7 +257,6 @@ void func_80295EB0_639550(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/overlay1_6384F0/func_80295FAC_63964C.s")
 
 void func_802988E8_63BF88(void) {
-
     gScreenWidth = 320;
     gScreenHeight = 240;
     func_80129300(&D_801D9E7C, D_80204278);
@@ -216,11 +273,12 @@ void func_802988E8_63BF88(void) {
 
     gSPTexture(D_801D9E7C++, 32768, 32768, 0, G_TX_RENDERTILE, G_ON);
 
+    // reset used counters
     D_80204278->unk38914 = 0;
     D_80204278->unk38918 = 0;
     D_80204278->unk38914 = 0;
     D_80204278->unk39310 = 0;
-    D_80204278->unk38910 = 0;
+    D_80204278->usedHilites = 0;
 
     func_80295FAC_63964C(&D_80162658[D_80152EB8]);
     if (D_80299E24 != 0) {
@@ -267,18 +325,12 @@ void func_80298AC0_63C160(void) {
 //     s32 temp_v0_4;
 //     s32 temp_v1;
 //
-//
-//     s32 i;
-//     s32 j;
+//     s16 i;
+//     s16 j;
 //
 //     gSPDisplayList(arg0++, &D_801582C0);
 //
-//     sp20 = 8;
-//     sp14 = &D_80364E88;
-//     sp10 = &D_801D9E7C;
-//     sp18 = 1.0f;
-//     sp1C = 1.0f;
-//     func_801356C0(1, 1, 1, 1);
+//     func_801356C0(1, 1, 1, 1, &D_80364E88, D_801D9E7C, 1.0f, 1.0f, 8);
 //     temp_t7 = ((arg0 * 8) - 1) & 0xFF;
 //     spAA = 0;
 //     temp_v0_3 = arg0 / 2;
@@ -290,24 +342,23 @@ void func_80298AC0_63C160(void) {
 //     sp64 = 0x10 - temp_v0_3;
 //
 //     for (i = 0; i < 8; i++) {
-//         temp_v0_4 = i << 5;
+//         // temp_v0_4 = i << 5;
 //         for (j = 0; j < 10; j ++) {
-//             temp_v1 = j << 5;
+//             // temp_v1 = j << 5;
 //
-//             gDPSetPrimColor(D_801D9E7C++, 0, 0, 0x00, 0x00, 0x00, 0xFF);
-//             gDPFillRectangle(D_801D9E7C++, 0, 0, 0, 0);
+//             gDPSetPrimColor(D_801D9E7C++, 0, 0, 0, 0, 0, 255);
+//             gDPFillRectangle(D_801D9E7C++, j + sp80 + sp84, i + sp80 + sp84, j + sp70, i + sp70);
 //             // temp_v0_6->unk0 = (s32) ((((temp_v1 + sp80 + sp84) & 0x3FF) << 0xE) | 0xF6000000 | (((temp_v0_4 + sp80 + sp84) & 0x3FF) * 4));
 //             // temp_v0_6->unk4 = (s32) ((((temp_v1 + sp70) & 0x3FF) << 0xE) | (((temp_v0_4 + sp70) & 0x3FF) * 4));
-//
 //             gDPSetPrimColor(arg0++, 0, 0, temp_t7, temp_t7, temp_t7, 0xff);
 //             // temp_v0_7->unk4 = sp68;
 //
-//             sp20 = 16;
-//             sp1C = temp_f20;
-//             sp18 = temp_f20;
-//             sp14 = i + 0x62000 + &D_80302E88;
-//             sp10 = &D_801D9E7C;
-//             func_801356C0(temp_v1 + sp64, temp_v0_4 + sp64, arg0, arg0);
+//             // sp20 = 16;
+//             // sp1C = temp_f20;
+//             // sp18 = temp_f20;
+//             // sp14 = i + 0x62000 + &D_80302E88;
+//             // sp10 = &D_801D9E7C;
+//             func_801356C0(j + sp64, i + sp64, arg0, arg0, &D_801D9E7C, i + 0x62000 + &D_80302E88, temp_f20, temp_f20, 16);
 //         }
 //         spAA = i;
 //     }
@@ -315,4 +366,5 @@ void func_80298AC0_63C160(void) {
 //     gDPSetPrimColor(D_801D9E7C++, 0, 0, 0xff, 0xff, 0xff, 0xff)
 // }
 
+// loopy
 #pragma GLOBAL_ASM("asm/nonmatchings/overlay1_6384F0/func_80298F1C_63C5BC.s")
