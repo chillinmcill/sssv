@@ -168,7 +168,37 @@ void func_802B964C_6CACFC(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlay2_6C9DD0/func_802BA614_6CBCC4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlay2_6C9DD0/func_802BAA38_6CC0E8.s")
+void func_802BAA38_6CC0E8(u16 arg0, u16 arg1) {
+    D_80203FE0.unk1C = 0;
+    D_80203FE0.unk18 = -arg1;
+    D_80203FE0.unk24 = 0;
+    D_80203FE0.unk2A = -arg0;
+    D_80203FE0.unk28 = -arg1;
+    D_80203FE0.unk2C = 0;
+    D_80203FE0.unk32 = -arg0;
+    D_80203FE0.unk34 = 0;
+    D_80203FE0.unk20 = arg1;
+    D_80203FE0.unk30 = arg1;
+    D_80203FE0.unk1A = arg0;
+    D_80203FE0.unk22 = arg0;
+    func_802C79E0_6D9090(&D_80203FF8, (s16) -D_803D5530->unk28, -arg1, -arg0);
+    func_802C79E0_6D9090(&D_80204000, (s16) -D_803D5530->unk28);
+    func_802C79E0_6D9090(&D_80204008, (s16) -D_803D5530->unk28);
+    func_802C79E0_6D9090(&D_80204010, (s16) -D_803D5530->unk28);
+    D_80203FE0.unk1C = (D_80203FE0.unk1C + (D_803D5524->unkB8 << 5));
+    D_80203FE0.unk24 = (D_80203FE0.unk24 + (D_803D5524->unkB8 << 5));
+    D_80203FE0.unk2C = (D_80203FE0.unk2C + (D_803D5524->unkB8 << 5));
+    D_80203FE0.unk34 = (D_80203FE0.unk34 + (D_803D5524->unkB8 << 5));
+    D_80203FE0.unk8 = ((D_80203FE0.unk20 + D_80203FE0.unk18) >> 1);
+    D_80203FE0.unkA = ((D_80203FE0.unk22 + D_80203FE0.unk1A) >> 1);
+    D_80203FE0.unkC = ((D_80203FE0.unk24 + D_80203FE0.unk1C) >> 1);
+    D_80203FE0.unk10 = ((D_80203FE0.unk30 + D_80203FE0.unk28) >> 1);
+    D_80203FE0.unk12 = ((D_80203FE0.unk32 + D_80203FE0.unk2A) >> 1);
+    D_80203FE0.unk14 = ((D_80203FE0.unk34 + D_80203FE0.unk2C) >> 1);
+    D_80203FE0.unk2 = 0;
+    D_80203FE0.unk0 = D_80203FE0.unk2;   
+    D_80203FE0.unk4 = ((D_80203FE0.unk14 + D_80203FE0.unkC) >> 1);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlay2_6C9DD0/func_802BAC24_6CC2D4.s")
 

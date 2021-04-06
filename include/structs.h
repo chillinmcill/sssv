@@ -367,8 +367,8 @@ typedef struct {
 
 // is this even a struct
 typedef struct {
-    s8  unk0;
-    u8  unk1[0x3];
+    s16  unk0;
+    s16  unk2;
     s16 unk4;
     u8  pad6[0x2];
     s16 unk8;
@@ -769,7 +769,8 @@ struct struct035 {
               u8  padA6[0x4];
               u16 unkAA; // scaling?
               u16 unkAC; // scaling?
-              u8  padAE[0xC];
+              u8  padAE[0xA];
+              u16 unkB8;
               u16 unkBA;
               u8  padBC[0x6];
               s16 unkC2; // scaling?
