@@ -87,7 +87,7 @@ struct Animal {
     /* 0x4A */  s8  unk4A;
     /* 0x4B */  u8  unk4B;
     /* 0x4C */  s16 unk4C;
-    /* 0x4E */  u8  pad4E;
+    /* 0x4E */  u8  pad4E[0x1];
     /* 0x4F */  u8  unk4F;
     /* 0x50 */  u8  pad50[0xC];
     /* 0x5C */  u8  unk5C;
@@ -198,7 +198,7 @@ struct Animal {
     /* 0x2FC */ u16 unk2FC;
     /* 0x2FE */ u8  pad2FE[0x4];
     /* 0x302 */ s16 unk302;
-    /* 0x302 */ s16 unk304;
+    /* 0x304 */ s16 unk304;
     /* 0x306 */ s16 unk306;
     /* 0x308 */ s16 unk308;
     /* 0x30A */ s16 unk30A;

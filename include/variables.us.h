@@ -174,6 +174,7 @@ extern s16  D_80200008;
 extern s16  D_80203FD0;
 extern s32  D_80203FD2;
 extern struct016 D_80203FE0;
+extern s16  D_80203FE8;
 extern s16  D_80203FF0;
 extern s16  D_80203FF2;
 extern s16  D_80203FF8;
@@ -282,6 +283,7 @@ extern u8   D_802BC430[];
 extern u8   D_802C11C0[];
 extern s32  D_802EEB20;
 extern u8   D_802F4CA0[];
+
 
 
 
