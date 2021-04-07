@@ -1123,5 +1123,3 @@ typedef struct {
      s16 unkC;
      s16 unkE;
 } struct060;
-
-#endif
