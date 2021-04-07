@@ -692,3 +692,5 @@ void generate_stars(void);
 void seconds_to_mins_secs(const s16 seconds, s16 *mins, s16 *secs) ;
 void func_8039DBC8_7AF278(void);
 s32  func_8039DCC0_7AF370(s16 arg0);
+
+#endif
